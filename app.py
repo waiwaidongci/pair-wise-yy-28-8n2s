@@ -24,6 +24,7 @@ class Handler(BaseHTTPRequestHandler):
                 data=(BASE/"static"/"index.html").read_bytes(); self.send_response(200); self.send_header("Content-Type","text/html; charset=utf-8"); self.send_header("Content-Length",str(len(data))); self.end_headers(); self.wfile.write(data); return
             if p.path=="/api/state": return self._json(200,self.db.snapshot())
             if len(parts)==4 and parts[:2]==["api","productions"] and parts[3]=="continuity": return self._json(200,self.db.continuity_report(int(parts[2])))
+            if len(parts)==4 and parts[:2]==["api","productions"] and parts[3]=="conflicts": return self._json(200,{"conflicts":self.db.list_production_conflicts(int(parts[2]),True)})
             if len(parts)==4 and parts[:2]==["api","scenes"] and parts[3]=="conflicts": return self._json(200,{"conflicts":self.db.list_conflicts(int(parts[2]),True)})
             self._json(404,{"ok":False,"error":"接口不存在"})
         except (DomainError,ValueError) as exc: self._json(400,{"ok":False,"error":str(exc)})
